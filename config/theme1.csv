@@ -1,75 +1,75 @@
-﻿Id;Word;Rules;Key1;Key2;Key3;Key4;Key5;Key6;Stop1;Stop2;Stop3;Stop4;Stop5;Stop6;Stop7;Stop8;Stop9
-1;2T bike;1;2T;bike;;;;;mix;motorboat;snow;special outboard;superbike;;;;
-2;2T mix;1;2T;mix;;;;;bike;motorboat;snow;special outboard;;;;;
-3;2T motorboat;1;2T;motorboat;;;;;mix;bike;snow;special outboard;;;;;
-4;2T snow;1;snow;;;;;;;;;;;;;;
-5;2T snow;1;2T;snow;;;;;mix;bike;motorboat;special outboard;;;;;
-6;2T special outboard;0;outboard;;;;;;;;;;;;;;
-7;2T special outboard;1;2T;special outboard;;;;;mix;bike;motorboat;snow;;;;;
-8;4T special motorboat;0;4T;specjal motorboat;spesial motorboat;;;;;;;;;;;;
-9;4T special motorboat;1;4T;special motorboat;;;;;superbike;;;;;;;;
-10;4T superbike;1;4T;superbike;;;;;special motorboat;;;;;;;;
-11;COMPRESSOR P ;1;COMPRESSOR;;;;;;SHV;SX;;;;;;;
-12;COMPRESSOR SHV ;1;COMPRESSOR;SHV;;;;;;SX;;;;;;;
-13;COMPRESSOR SX ;1;COMPRESSOR;SX;;;;;SHV;;;;;;;;
-15;DIAMOND CARAT;1;DIAMOND;CARAT;;;;;CARAT FE;CARAT III;;;;;;;
-16;DIAMOND CARAT FE;1;DIAMOND;CARAT FE;;;;;CARAT III;;;;;;;;
-17;DIAMOND CARAT III;1;DIAMOND;CARAT III;;;;;CARAT FE;;;;;;;;
-;DIAMOND ECP;1;DIAMOND;EC;;;;;ECP;;;;;;;;
-18;DIAMOND ECP ;1;DIAMOND;ECP;;;;;CARAT;ECP C3;;;;;;;
-19;DIAMOND ECP C3;1;DIAMOND;ECP C3;;;;;CARAT;;;;;;;;
-20;DIAMOND EXTREME;1;DIAMOND;EXTREME;;;;;CARAT;;;;;;;;
-21;DIAMOND FS ;1;DIAMOND;FS;;;;;CARAT;;;;;;;;
-22;DIAMOND MULTI;1;DIAMOND;MULTI;;;;;CARAT;;;;;;;;
-24;gold FE;1;gold;FE;;;;;;;;;;;;;
-25;gold L;0;gold L;goldl;gоld l;gold  l;cold l;;FE;;;;;;;;
-26;gold S;0;gold S;gold(s);gold-s;golds s;;;FE;;;;;;;;
-27;GREASE AXP;1;GREASE;AXP;;;;;;POLYU;LCP;MS;;;;;
-28;GREASE L;1;GREASE;;;;;;AXP;POLYU;LCP;MS;;;;;
-29;GREASE LCP;1;GREASE;LCP;;;;;AXP;POLYU;;MS;;;;;
-30;GREASE LCP MS ;1;GREASE;LCP;MS;;;;AXP;POLYU;;;;;;;
-31;GREASE POLYU;1;GREASE;POLYU;;;;;AXP;;LCP;MS;;;;;
-;grease multipurpose;1;grease;multipurpose;;;;;AXP;POLYU;LCP;MS;;;;;
-33;HYDRAULIC HFAE ;1;HYDRAULIC HFAE;;;;;;;;VA;;;;;;
-34;HYDRAULIC HFDU;1;HYDRAULIC HFDU;;;;;;;;VA;;;;;;
-36;Hydraulic Polar;1;Hydraulic;Polar;;;;;;Hydraulic S;VA;ZF;;;;;
-37;Hydraulic S ;1;Hydraulic S;;;;;;Polar;;;;;;;;
-38;HYDRAULIC VA ;1;HYDRAULIC;VA;;;;;Polar;;;ZF;HFDU;HFAE;;;
-39;Hydraulic ZF ;1;Hydraulic;ZF;;;;;Polar;Hydraulic S;VA;;;;;;
-41;hypoid LS;1;hypoid;LS;;;;;;;;;;;;;
-42;hypoid M;1;hypoid M;;;;;;LS;;;;;;;;
-43;Larita ;1;LARITA;;;;;;ZF;BL;;;;;;;
-44;LARITA BL ;1;LARITA;BL;;;;;ZF;;;;;;;;
-45;LARITA ZF ;1;LARITA;ZF;;;;;;BL;;;;;;;
-46;MULTIPURPOSE HT;0;multi purpose ht;multi-purpose ht;multipurpose hт;multi;;;;;;;;;;;
-47;MULTIPURPOSE EP;1;multiourpose;ep;;;;;;;;;;;;;
-48;MULTIPURPOSE EP;1;MULTIPURPOSE;EP;;;;;;HT;;;;;;;
-49;MULTIPURPOSE HT;1;MULTIPURPOSE;HT;;;;;EP;;;;;;;;
-50;PNEUMO;0;PNEUMO;;;;;;;;;;;;;;
-51;Pressure ;0;Pressure;;;;;;;;;;;;;;
-53;silver L;0;silver L;;silwer L;siver L;solver L;;;;;;;;;;
-54;silver sn;1;silver;sn;;;;;;;;;;;;;
-55;silver sn;0;silwer sn;siver sn;solver sn;;;;;;;;;;;;
-56;SLIDE;1;SLIDE;;;;;;;;;;;;;;
-58;SUPER HPD;0;super hp;super hrd;;;;;;;;;;;;;
-59;SUPER HPD;1;SUPER;HPD;;;;;ECV;PLUS;;XLD-2;;;;;
-60;SUPER HPD ECV ;1;SUPER;HPD;ECV;;;;;PLUS;;XLD-2;;;;;
-61;SUPER HPD PLUS ;1;SUPER;HPD;PLUS;;;;ECV;;;XLD-2;;;;;
-62;SUPER XLD;1;SUPER;XLD;;;;;ECV;EEV;XLD-3;XLD-2;HPD;;;;
-63;SUPER XLD ECV ;1;SUPER;XLD;ECV;;;;;EEV;XLD-3;XLD-2;HPD;;;;
-64;SUPER XLD EEV ;1;SUPER;XLD;EEV;;;;ECV;;XLD-3;XLD-2;HPD;;;;
-65;SUPER XLD-2;1;SUPER;XLD-2;;;;;PLUS;;;;HPD;;;;
-66;SUPER XLD-2 PLUS ;1;SUPER;XLD-2;PLUS;;;;;;;;HPD;;;;
-67;SUPER XLD-3;1;SUPER;XLD-3;;;;;;;;XLD-2;HPD;;;;
-68;SYPRES;1;SYPRES;;;;;;EXTRA;;;;;;;;
-69;SYPRES EXTRA;1;SYPRES;EXTRA;;;;;;;;;;;;;
-70;TURBINE XOR ;1;TURBINE;XOR;;;;;;;;;;;;;
-71;monitra plus;1;monitra;plus;;;;;;;;;;;;;
-72;fluid s;1;fluid s;;;;;;;;;;;;;;
-73;fluid e;1;fluid e;;;;;;;;;;;;;;
-74;GEAR MTF-V;1;GEAR;MTF-V;;;;;;;;;;;;;
-75;power;1;power;;;;;;;;;;;;;;
-76;UNIVERSAL M;1;UNIVERSAL;;;;;;;;;;;;;;
-77;solid 0;1;solid 0;;;;;;;;;;;;;;
-78;solid 2;1;solid 2;;;;;;;;;;;;;;
-79;moniaste;1;moniaste;;;;;;;;;;;;;;
+﻿Id;Word;Rules;Key1;Key2;Key3;Key4;Key5;Key6;Stop1;Stop2;Stop3;Stop4;Stop5;Stop6;Stop7;Stop8;Stop9;Rules_FILTER;FILTER_brand
+1;2T bike;1;2T;bike;;;;;mix;motorboat;snow;special outboard;superbike;;;;;1;teboil
+2;2T mix;1;2T;mix;;;;;bike;motorboat;snow;special outboard;;;;;;1;teboil
+3;2T motorboat;1;2T;motorboat;;;;;mix;bike;snow;special outboard;;;;;;1;teboil
+4;2T snow;1;snow;;;;;;;;;;;;;;;1;teboil
+5;2T snow;1;2T;snow;;;;;mix;bike;motorboat;special outboard;;;;;;1;teboil
+6;2T special outboard;0;outboard;;;;;;;;;;;;;;;1;teboil
+7;2T special outboard;1;2T;special outboard;;;;;mix;bike;motorboat;snow;;;;;;1;teboil
+8;4T special motorboat;0;4T;specjal motorboat;spesial motorboat;;;;;;;;;;;;;1;teboil
+9;4T special motorboat;1;4T;special motorboat;;;;;superbike;;;;;;;;;1;teboil
+10;4T superbike;1;4T;superbike;;;;;special motorboat;;;;;;;;;1;teboil
+11;COMPRESSOR P ;1;COMPRESSOR;;;;;;SHV;SX;;;;;;;;1;teboil
+12;COMPRESSOR SHV ;1;COMPRESSOR;SHV;;;;;;SX;;;;;;;;1;teboil
+13;COMPRESSOR SX ;1;COMPRESSOR;SX;;;;;SHV;;;;;;;;;1;teboil
+15;DIAMOND CARAT;1;DIAMOND;CARAT;;;;;CARAT FE;CARAT III;;;;;;;;1;teboil
+16;DIAMOND CARAT FE;1;DIAMOND;CARAT FE;;;;;CARAT III;;;;;;;;;1;teboil
+17;DIAMOND CARAT III;1;DIAMOND;CARAT III;;;;;CARAT FE;;;;;;;;;1;teboil
+;DIAMOND ECP;1;DIAMOND;EC;;;;;ECP;;;;;;;;;1;teboil
+18;DIAMOND ECP ;1;DIAMOND;ECP;;;;;CARAT;ECP C3;;;;;;;;1;teboil
+19;DIAMOND ECP C3;1;DIAMOND;ECP C3;;;;;CARAT;;;;;;;;;1;teboil
+20;DIAMOND EXTREME;1;DIAMOND;EXTREME;;;;;CARAT;;;;;;;;;1;teboil
+21;DIAMOND FS ;1;DIAMOND;FS;;;;;CARAT;;;;;;;;;1;teboil
+22;DIAMOND MULTI;1;DIAMOND;MULTI;;;;;CARAT;;;;;;;;;1;teboil
+24;gold FE;1;gold;FE;;;;;;;;;;;;;;1;teboil
+25;gold L;0;gold L;goldl;gоld l;gold  l;cold l;;FE;;;;;;;;;1;teboil
+26;gold S;0;gold S;gold(s);gold-s;golds s;;;FE;;;;;;;;;1;teboil
+27;GREASE AXP;1;GREASE;AXP;;;;;;POLYU;LCP;MS;;;;;;1;teboil
+28;GREASE L;1;GREASE;;;;;;AXP;POLYU;LCP;MS;;;;;;1;teboil
+29;GREASE LCP;1;GREASE;LCP;;;;;AXP;POLYU;;MS;;;;;;1;teboil
+30;GREASE LCP MS ;1;GREASE;LCP;MS;;;;AXP;POLYU;;;;;;;;1;teboil
+31;GREASE POLYU;1;GREASE;POLYU;;;;;AXP;;LCP;MS;;;;;;1;teboil
+;grease multipurpose;1;grease;multipurpose;;;;;AXP;POLYU;LCP;MS;;;;;;1;teboil
+33;HYDRAULIC HFAE ;1;HYDRAULIC HFAE;;;;;;;;VA;;;;;;;1;teboil
+34;HYDRAULIC HFDU;1;HYDRAULIC HFDU;;;;;;;;VA;;;;;;;1;teboil
+36;Hydraulic Polar;1;Hydraulic;Polar;;;;;;Hydraulic S;VA;ZF;;;;;;1;teboil
+37;Hydraulic S ;1;Hydraulic S;;;;;;Polar;;;;;;;;;1;teboil
+38;HYDRAULIC VA ;1;HYDRAULIC;VA;;;;;Polar;;;ZF;HFDU;HFAE;;;;1;teboil
+39;Hydraulic ZF ;1;Hydraulic;ZF;;;;;Polar;Hydraulic S;VA;;;;;;;1;teboil
+41;hypoid LS;1;hypoid;LS;;;;;;;;;;;;;;1;teboil
+42;hypoid M;1;hypoid M;;;;;;LS;;;;;;;;;1;teboil
+43;Larita ;1;LARITA;;;;;;ZF;BL;;;;;;;;1;teboil
+44;LARITA BL ;1;LARITA;BL;;;;;ZF;;;;;;;;;1;teboil
+45;LARITA ZF ;1;LARITA;ZF;;;;;;BL;;;;;;;;1;teboil
+46;MULTIPURPOSE HT;0;multi purpose ht;multi-purpose ht;multipurpose hт;multi;;;;;;;;;;;;1;teboil
+47;MULTIPURPOSE EP;1;multiourpose;ep;;;;;;;;;;;;;;1;teboil
+48;MULTIPURPOSE EP;1;MULTIPURPOSE;EP;;;;;;HT;;;;;;;;1;teboil
+49;MULTIPURPOSE HT;1;MULTIPURPOSE;HT;;;;;EP;;;;;;;;;1;teboil
+50;PNEUMO;0;PNEUMO;;;;;;;;;;;;;;;1;teboil
+51;Pressure ;0;Pressure;;;;;;;;;;;;;;;1;teboil
+53;silver L;0;silver L;;silwer L;siver L;solver L;;;;;;;;;;;1;teboil
+54;silver sn;1;silver;sn;;;;;;;;;;;;;;1;teboil
+55;silver sn;0;silwer sn;siver sn;solver sn;;;;;;;;;;;;;1;teboil
+56;SLIDE;1;SLIDE;;;;;;;;;;;;;;;1;teboil
+58;SUPER HPD;0;super hp;super hrd;;;;;;;;;;;;;;1;teboil
+59;SUPER HPD;1;SUPER;HPD;;;;;ECV;PLUS;;XLD-2;;;;;;1;teboil
+60;SUPER HPD ECV ;1;SUPER;HPD;ECV;;;;;PLUS;;XLD-2;;;;;;1;teboil
+61;SUPER HPD PLUS ;1;SUPER;HPD;PLUS;;;;ECV;;;XLD-2;;;;;;1;teboil
+62;SUPER XLD;1;SUPER;XLD;;;;;ECV;EEV;XLD-3;XLD-2;HPD;;;;;1;teboil
+63;SUPER XLD ECV ;1;SUPER;XLD;ECV;;;;;EEV;XLD-3;XLD-2;HPD;;;;;1;teboil
+64;SUPER XLD EEV ;1;SUPER;XLD;EEV;;;;ECV;;XLD-3;XLD-2;HPD;;;;;1;teboil
+65;SUPER XLD-2;1;SUPER;XLD-2;;;;;PLUS;;;;HPD;;;;;1;teboil
+66;SUPER XLD-2 PLUS ;1;SUPER;XLD-2;PLUS;;;;;;;;HPD;;;;;1;teboil
+67;SUPER XLD-3;1;SUPER;XLD-3;;;;;;;;XLD-2;HPD;;;;;1;teboil
+68;SYPRES;1;SYPRES;;;;;;EXTRA;;;;;;;;;1;teboil
+69;SYPRES EXTRA;1;SYPRES;EXTRA;;;;;;;;;;;;;;1;teboil
+70;TURBINE XOR ;1;TURBINE;XOR;;;;;;;;;;;;;;1;teboil
+71;monitra plus;1;monitra;plus;;;;;;;;;;;;;;1;teboil
+72;fluid s;1;fluid s;;;;;;;;;;;;;;;1;teboil
+73;fluid e;1;fluid e;;;;;;;;;;;;;;;1;teboil
+74;GEAR MTF-V;1;GEAR;MTF-V;;;;;;;;;;;;;;1;teboil
+75;power;1;power;;;;;;;;;;;;;;;1;teboil
+76;UNIVERSAL M;1;UNIVERSAL;;;;;;;;;;;;;;;1;teboil
+77;solid 0;1;solid 0;;;;;;;;;;;;;;;1;teboil
+78;solid 2;1;solid 2;;;;;;;;;;;;;;;1;teboil
+79;moniaste;1;moniaste;;;;;;;;;;;;;;;1;teboil
