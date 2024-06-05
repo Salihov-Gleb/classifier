@@ -93,8 +93,10 @@ def row_classification(row, text_field_name, theme_dict):
     themes = []
     key_words = []
     stop_words = []
-    filters = theme_dict.pop('filters', None)
+    filters = theme_dict.get('filters', None)
     for theme, words in theme_dict.items():
+        if theme == 'filters':
+            continue
         flag, key, stop = is_class_test(row, words, text_field_name, filters)
         if flag:
             themes.append(theme)
