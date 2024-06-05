@@ -13,14 +13,14 @@ def load_theme_dict():
     for file in files:
         theme_dict = {}
         with open(f'{CONFIG_DIR}/{file}', 'r', newline='', encoding='utf-8') as f:
-            row = f.readline().rstrip('\n\r').split(';')
+            row = f.readline().rstrip('\n\r').lower().split(';')
             kw_count = len(list(filter(lambda x: x.lower().find('key') > -1, row)))
             sw_count = len(list(filter(lambda x: x.lower().find('stop') > -1, row)))
             try:
-                filter_index = row.index('Rules_FILTER')
+                filter_index = row.index('rules_filter')
                 filters = list(map(
-                    lambda x: x[len('FILTER') + 1:],
-                    filter(lambda x: x.find('FILTER') == 0, row[filter_index + 1:])
+                    lambda x: x[len('filter') + 1:],
+                    filter(lambda x: x.find('filter') == 0, row[filter_index + 1:])
                 ))
                 theme_dict = {"filters": filters}
             except ValueError:
@@ -63,7 +63,7 @@ def is_class_test(row, words, text_field_name, filters=None):
         local_stop = False
         filter_match_counter = 0
         for i, filter_col in enumerate(filters):
-            if row[filter_col] == pattern['filter_values'][i]:
+            if row[filter_col].lower() == pattern['filter_values'][i]:
                 filter_match_counter += 1
         if pattern['filter_rule'] == '1' and filter_match_counter != len(filters):
             continue
@@ -107,6 +107,7 @@ def row_classification(row, text_field_name, theme_dict):
 
 def classify_csv(file_name, text_field_name, theme_dict_list):
     df = pd.read_csv(file_name, delimiter=';', encoding='utf-8')
+    df.columns = map(str.lower, df.columns)
     df = clean(df, text_field_name)
     i = 1
     for theme_dict in theme_dict_list:
@@ -121,11 +122,13 @@ def classify_csv(file_name, text_field_name, theme_dict_list):
 
 def classify_xlsx(file_name, text_field_name, theme_dict_list):
     df = pd.read_excel(file_name)
+    df.columns = map(str.lower, df.columns)
     df = clean(df, text_field_name)
     i = 1
     for theme_dict in theme_dict_list:
-        df[[f'theme{i}', f'key{i}', f'stop{i}']] = df[text_field_name].apply(
-            lambda row: row_classification(str(row).lower(), theme_dict)
+        df[[f'theme{i}', f'keys{i}', f'stop{i}']] = df.apply(
+            lambda row: row_classification(row, text_field_name, theme_dict),
+            axis=1
         )
         i += 1
     df.drop_duplicates()
@@ -152,9 +155,9 @@ if __name__ == '__main__':
     with open(conf.get('FILE_NAME', ''), encoding='utf-8') as f:
         pass
     if conf.get('FILE_NAME', '').split('.')[-1] == 'csv':
-        classify_csv(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary'), theme_dict_list)
+        classify_csv(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary').lower(), theme_dict_list)
     elif conf.get('FILE_NAME', '').split('.')[-1] == 'xlsx':
-        classify_xlsx(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary'), theme_dict_list)
+        classify_xlsx(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary').lower(), theme_dict_list)
     else:
         raise Exception('неподдерживаемое расширение файла')
 
