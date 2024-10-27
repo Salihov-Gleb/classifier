@@ -4790,7 +4790,7 @@ def func_93_fuchs(go_deep=1, pages_cnt=1):
     return OKsw, df_
 
 
-def func_94_kirel(go_deep=1, pages_cnt=1):
+def func_94_kirei(go_deep=1, pages_cnt=1):
 
     main_url = 'https://kirei-chemical.ru'
     url = 'https://kirei-chemical.ru/novosti/'
