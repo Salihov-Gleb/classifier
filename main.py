@@ -13,9 +13,19 @@ def load_theme_dict():
     for file in files:
         theme_dict = {}
         with open(f'{CONFIG_DIR}/{file}', 'r', newline='', encoding='utf-8') as f:
-            row = f.readline().split(';')
+            row = f.readline().rstrip('\n\r').lower().split(';')
             kw_count = len(list(filter(lambda x: x.lower().find('key') > -1, row)))
             sw_count = len(list(filter(lambda x: x.lower().find('stop') > -1, row)))
+            try:
+                filter_index = row.index('rules_filter')
+                filters = list(map(
+                    lambda x: x[len('filter') + 1:],
+                    filter(lambda x: x.find('filter') == 0, row[filter_index + 1:])
+                ))
+                theme_dict = {"filters": filters}
+            except ValueError:
+                filter_index = None
+                filters = []
             row = f.readline().lower().rstrip('\n\r').split(';')
             while len(row) > 2:
                 index = 3
@@ -23,30 +33,50 @@ def load_theme_dict():
                 kw = list(filter(lambda x: len(x) > 0, row[index:index + kw_count]))
                 index += kw_count
                 sw = list(filter(lambda x: len(x) > 0, row[index:index + sw_count]))
-                if row[1] in theme_dict:
-                    theme_dict[row[1]].append({"kw": kw, "sw": sw, "rule": rule})
+                if filter_index is not None:
+                    filter_rule = row[filter_index]
+                    filter_values = row[filter_index + 1: filter_index + 1 + len(filters)]
                 else:
-                    theme_dict.update({row[1]: [{"kw": kw, "sw": sw, "rule": rule}]})
+                    filter_rule = None
+                    filter_values = []
+                if row[1] in theme_dict:
+                    theme_dict[row[1]].append({
+                        "kw": kw, "sw": sw, "rule": rule, "filter_rule": filter_rule, "filter_values": filter_values
+                    })
+                else:
+                    theme_dict.update({row[1]: [{
+                        "kw": kw, "sw": sw, "rule": rule, "filter_rule": filter_rule, "filter_values": filter_values
+                    }]})
                 row = f.readline().lower().rstrip('\n\r').split(';')
         result.append(theme_dict)
     return result
 
 
-def is_class_test(text, words):
+def is_class_test(row, words, text_field_name, filters=None):
     key = []
     stop = []
     result = False
+    if filters is None:
+        filters = []
     for pattern in words:
         result_local = False
         local_stop = False
+        filter_match_counter = 0
+        for i, filter_col in enumerate(filters):
+            if row[filter_col].lower() == pattern['filter_values'][i]:
+                filter_match_counter += 1
+        if pattern['filter_rule'] == '1' and filter_match_counter != len(filters):
+            continue
+        if pattern['filter_rule'] == '0' and filter_match_counter == 0 and len(filters) > 0:
+            continue
         for sw in pattern['sw']:
-            match = re.findall(sw, text)
+            match = re.findall(sw, row[text_field_name])
             if match:
                 stop.extend(match)
                 local_stop = True
         kw_counter = 0
         for kw in pattern['kw']:
-            match = re.findall(kw, text)
+            match = re.findall(kw, row[text_field_name])
             if match:
                 kw_counter += 1
                 key.extend(match)
@@ -59,12 +89,15 @@ def is_class_test(text, words):
     return result, ', '.join(key), ', '.join(stop)
 
 
-def row_classification(text, theme_dict):
+def row_classification(row, text_field_name, theme_dict):
     themes = []
     key_words = []
     stop_words = []
+    filters = theme_dict.get('filters', None)
     for theme, words in theme_dict.items():
-        flag, key, stop = is_class_test(text, words)
+        if theme == 'filters':
+            continue
+        flag, key, stop = is_class_test(row, words, text_field_name, filters)
         if flag:
             themes.append(theme)
         key_words.append(key)
@@ -74,11 +107,13 @@ def row_classification(text, theme_dict):
 
 def classify_csv(file_name, text_field_name, theme_dict_list):
     df = pd.read_csv(file_name, delimiter=';', encoding='utf-8')
+    df.columns = map(str.lower, df.columns)
     df = clean(df, text_field_name)
     i = 1
     for theme_dict in theme_dict_list:
-        df[[f'theme{i}', f'keys{i}', f'stop{i}']] = df[text_field_name].apply(
-            lambda row: row_classification(str(row).lower(), theme_dict)
+        df[[f'theme{i}', f'keys{i}', f'stop{i}']] = df.apply(
+            lambda row: row_classification(row, text_field_name, theme_dict),
+            axis=1
         )
         i += 1
     df.drop_duplicates()
@@ -87,11 +122,13 @@ def classify_csv(file_name, text_field_name, theme_dict_list):
 
 def classify_xlsx(file_name, text_field_name, theme_dict_list):
     df = pd.read_excel(file_name)
+    df.columns = map(str.lower, df.columns)
     df = clean(df, text_field_name)
     i = 1
     for theme_dict in theme_dict_list:
-        df[[f'theme{i}', f'key{i}', f'stop{i}']] = df[text_field_name].apply(
-            lambda row: row_classification(str(row).lower(), theme_dict)
+        df[[f'theme{i}', f'keys{i}', f'stop{i}']] = df.apply(
+            lambda row: row_classification(row, text_field_name, theme_dict),
+            axis=1
         )
         i += 1
     df.drop_duplicates()
@@ -118,9 +155,9 @@ if __name__ == '__main__':
     with open(conf.get('FILE_NAME', ''), encoding='utf-8') as f:
         pass
     if conf.get('FILE_NAME', '').split('.')[-1] == 'csv':
-        classify_csv(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary'), theme_dict_list)
+        classify_csv(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary').lower(), theme_dict_list)
     elif conf.get('FILE_NAME', '').split('.')[-1] == 'xlsx':
-        classify_xlsx(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary'), theme_dict_list)
+        classify_xlsx(conf.get('FILE_NAME', ''), conf.get('TEXT_FIELD_NAME', 'u_summary').lower(), theme_dict_list)
     else:
         raise Exception('неподдерживаемое расширение файла')
 
