@@ -4544,6 +4544,7 @@ def func_90_seagull(go_deep=1, pages_cnt=1):
 
     df_ = get_newdf()
     pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
     try:
         driver = webdriver.Chrome(service=service, options=options)
         driver.get(url)
@@ -4604,6 +4605,7 @@ def func_91_enoc(go_deep=1, pages_cnt=1):
 
     df_ = get_newdf()
     OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
 
     try:
         page = requests.get(url, timeout=REQUEST_TIMEOUT)
@@ -4788,5 +4790,464 @@ def func_93_fuchs(go_deep=1, pages_cnt=1):
     return OKsw, df_
 
 
+def func_94_kirel(go_deep=1, pages_cnt=1):
+
+    main_url = 'https://kirei-chemical.ru'
+    url = 'https://kirei-chemical.ru/novosti/'
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    try:
+        page = requests.get(url, timeout=REQUEST_TIMEOUT)
+        OKsw = page.status_code
+        if OKsw == 200:
+            soup = BeautifulSoup(page.text, features="html.parser")
+            all_news = soup.find_all('div', attrs={'class': 'news-lastlist'})
+            for news in all_news:
+                one_feed = {}
+                one_feed['feid'] = ''
+                one_feed['fsid'] = ''
+                published = datetime.datetime.strptime(news.find('time').get_text().strip(), '%d.%m.%Y')
+                one_feed['published'] = published.strftime(DATE_FORMAT)
+                one_feed['u_etitle'] = news.find('div', attrs={'class': 'name'}).get_text().strip()
+                one_feed['u_summary'] = news.find('div', attrs={'class': 'desc'}).get_text().strip()
+                one_feed['etitle'] = one_feed['u_etitle']
+                one_feed['summary'] = one_feed['u_summary']
+                one_feed['elink'] = f"{main_url}{news.find('a').attrs['href']}"
+                one_feed['elink_img'] = f"{main_url}{news.find('img').attrs['src']}"
+                if go_deep != 0:  # обход ссылок по каждой новости
+                    try:
+                        page = requests.get(one_feed['elink'], timeout=REQUEST_TIMEOUT)
+                        if page.status_code != 200:
+                            continue
+                        soup = BeautifulSoup(page.text,  features="html.parser")
+                        one_feed['u_summary'] = soup.find(
+                            'div',
+                            attrs={'class': 'textLayer'}
+                        ).get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '')
+                        one_feed['summary'] = one_feed['u_summary']
+                    except Exception as e:
+                        pass
+
+                df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+    except Exception as e:
+        pass
+
+    return OKsw, df_
+
+
+def func_95_opnmz(go_deep=1, pages_cnt=1):
+
+    main_url = 'https://opnmz.ru'
+    url = 'https://opnmz.ru/media/'
+
+    months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+              'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    for p in range(1, pages_cnt + 1):
+        purl = f'{url}?PAGEN_1={p}'
+
+        try:
+            page = requests.get(purl, timeout=REQUEST_TIMEOUT)
+            OKsw = page.status_code
+            if OKsw == 200:
+                soup = BeautifulSoup(page.text, features="html.parser")
+                soup.find('div', attrs={'class': 'bx-pagination'}).decompose()
+                all_news = soup.find('div', attrs={'class': 'news'}).find_all('a')
+                for news in all_news:
+                    one_feed = {}
+                    one_feed['feid'] = ''
+                    one_feed['fsid'] = ''
+                    day, month, year = news.find('span', attrs={'class': 'news-item__date'}).get_text().strip().split()
+                    published = datetime.datetime(int(year), months.index(month, 0) + 1, int(day))
+                    one_feed['published'] = published.strftime(DATE_FORMAT)
+                    one_feed['u_etitle'] = news.find('span', attrs={'class': 'news-item__title'}).get_text().strip()
+                    one_feed['u_summary'] = one_feed['u_etitle']
+                    one_feed['etitle'] = one_feed['u_etitle']
+                    one_feed['summary'] = one_feed['u_summary']
+                    one_feed['elink'] = f"{main_url}{news.attrs['href']}"
+                    one_feed['elink_img'] = main_url + news.find(
+                        'span',
+                        attrs={'class': 'news-item__img'}
+                    ).attrs['style'].replace('background-image: url(', '').replace(');', '')
+                    if go_deep != 0:  # обход ссылок по каждой новости
+                        try:
+                            page = requests.get(one_feed['elink'], timeout=REQUEST_TIMEOUT)
+                            if page.status_code != 200:
+                                continue
+                            soup = BeautifulSoup(page.text, features="html.parser")
+                            one_feed['u_summary'] = soup.find(
+                                'div',
+                                attrs={'class': 'news-detail'}
+                            ).get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '')
+                            one_feed['summary'] = one_feed['u_summary']
+                        except Exception as e:
+                            pass
+
+                    df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+        except Exception as e:
+            pass
+
+    return OKsw, df_
+
+
+def func_96_sbk(go_deep=1, pages_cnt=1):
+
+    main_url = 'https://chemie.ru'
+    url = 'https://chemie.ru/news/'
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    for p in range(1, pages_cnt + 1):
+        purl = f'{url}?PAGEN_1={p}'
+
+        try:
+            page = requests.get(purl, timeout=REQUEST_TIMEOUT)
+            OKsw = page.status_code
+            if OKsw == 200:
+                soup = BeautifulSoup(page.text, features="html.parser")
+                all_news = soup.find_all('div', attrs={'class': 'front-news-item'})
+                for news in all_news:
+                    one_feed = {}
+                    one_feed['feid'] = ''
+                    one_feed['fsid'] = ''
+                    published = datetime.datetime.strptime(news.find(
+                        'span',
+                        attrs={'class': 'front-news-item__date'}
+                    ).text.strip(), '%d.%m.%Y')
+                    one_feed['published'] = published.strftime(DATE_FORMAT)
+                    one_feed['u_etitle'] = news.find('a').get_text().strip()
+                    one_feed['u_summary'] = one_feed['u_etitle']
+                    one_feed['etitle'] = one_feed['u_etitle']
+                    one_feed['summary'] = one_feed['u_summary']
+                    one_feed['elink'] = f"{main_url}{news.find('a').attrs['href']}"
+                    if go_deep != 0:  # обход ссылок по каждой новости
+                        try:
+                            page = requests.get(one_feed['elink'], timeout=REQUEST_TIMEOUT)
+                            if page.status_code != 200:
+                                continue
+                            soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'news-detail'})
+                            soup.find('span', attrs={'class': 'news-date-time'}).decompose()
+                            soup.find('h3').decompose()
+                            one_feed['u_summary'] = soup.get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '')
+                            one_feed['summary'] = one_feed['u_summary']
+                            img = soup.find('img')
+                            if img is not None:
+                                one_feed['elink_img'] = f"{main_url}{img.attrs['src']}"
+                        except Exception as e:
+                            pass
+
+                    df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+        except Exception as e:
+            pass
+
+    return OKsw, df_
+
+
+def func_97_neochemical(go_deep=1, pages_cnt=1):
+
+    main_url = 'https://neochemical.ru'
+    url = 'https://neochemical.ru/press-tsentr/novosti/'
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    for p in range(1, pages_cnt + 1):
+        purl = f'{url}?PAGEN_1={p}'
+
+        try:
+            page = requests.get(purl, timeout=REQUEST_TIMEOUT)
+            OKsw = page.status_code
+            if OKsw == 200:
+                soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'news_inner'})
+                all_news = soup.find_all('div', attrs={'class': 'in'})
+                for news in all_news:
+                    one_feed = {}
+                    one_feed['feid'] = ''
+                    one_feed['fsid'] = ''
+                    published = datetime.datetime.strptime(news.find('div', attrs={'class': 'date'}).text.strip(), '%d.%m.%Y')
+                    one_feed['published'] = published.strftime(DATE_FORMAT)
+                    one_feed['u_etitle'] = news.find('a').get_text().strip()
+                    one_feed['u_summary'] = one_feed['u_etitle']
+                    one_feed['etitle'] = one_feed['u_etitle']
+                    one_feed['summary'] = one_feed['u_summary']
+                    one_feed['elink'] = f"{main_url}{news.find('a').attrs['href']}"
+                    if go_deep != 0:  # обход ссылок по каждой новости
+                        try:
+                            page = requests.get(one_feed['elink'], timeout=REQUEST_TIMEOUT)
+                            if page.status_code != 200:
+                                continue
+                            soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'content'})
+                            one_feed['u_summary'] = soup.find('div', attrs={'class': 'text-with-pic'}).get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '')
+                            one_feed['summary'] = one_feed['u_summary']
+                            img = soup.find('img')
+                            if img is not None:
+                                one_feed['elink_img'] = f"{main_url}{img.attrs['src']}"
+                        except Exception as e:
+                            pass
+
+                    df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+        except Exception as e:
+            pass
+
+    return OKsw, df_
+
+
+def func_98_fuchs_news(go_deep=1, pages_cnt=1):
+
+    main_url = 'https://www.fuchs-oil.ru'
+    url = 'https://www.fuchs-oil.ru/news/novosti/'
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    for p in range(1, pages_cnt + 1):
+        purl = f'{url}page-{p}/'
+
+        try:
+            page = requests.get(purl, timeout=REQUEST_TIMEOUT)
+            OKsw = page.status_code
+            if OKsw == 200:
+                soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'articles__inner'})
+                all_news = soup.find_all('div', attrs={'class': 'article'})
+                for news in all_news:
+                    one_feed = {}
+                    one_feed['feid'] = ''
+                    one_feed['fsid'] = ''
+                    published = datetime.datetime.strptime(news.find('span', attrs={'class': 'news__item-meta'}).text.strip(), '%d.%m.%Y')
+                    one_feed['published'] = published.strftime(DATE_FORMAT)
+                    one_feed['u_etitle'] = news.find(
+                        'span',
+                        attrs={'class': 'article__title'}
+                    ).get_text().strip()
+                    one_feed['u_summary'] = news.find(
+                        'span',
+                        attrs={'class': 'article__summary'}
+                    ).get_text().strip()
+                    one_feed['etitle'] = one_feed['u_etitle']
+                    one_feed['summary'] = one_feed['u_summary']
+                    one_feed['elink'] = f"{main_url}{news.find('a').attrs['href']}"
+                    one_feed['elink_img'] = f"{main_url}{news.find('img').attrs['src']}"
+                    if go_deep != 0:  # обход ссылок по каждой новости
+                        try:
+                            page = requests.get(one_feed['elink'], timeout=REQUEST_TIMEOUT)
+                            if page.status_code != 200:
+                                continue
+                            soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'content__inner'})
+                            soup.find('h1').decompose()
+                            try:
+                                soup.find('div', attrs={'class': 'articles'}).decompose()
+                            except Exception as e:
+                                pass
+                            one_feed['u_summary'] = soup.get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '').replace('Еще почитать', '')
+                            one_feed['summary'] = one_feed['u_summary']
+                        except Exception as e:
+                            pass
+
+                    df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+        except Exception as e:
+            pass
+
+    return OKsw, df_
+
+
+def func_99_fuchs_press(go_deep=1, pages_cnt=1):
+
+    main_url = 'https://www.fuchs-oil.ru'
+    url = 'https://www.fuchs-oil.ru/news/press_relizy/'
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    for p in range(1, pages_cnt + 1):
+        purl = f'{url}page-{p}/'
+
+        try:
+            page = requests.get(purl, timeout=REQUEST_TIMEOUT)
+            OKsw = page.status_code
+            if OKsw == 200:
+                soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'articles__inner'})
+                all_news = soup.find_all('div', attrs={'class': 'article'})
+                for news in all_news:
+                    one_feed = {}
+                    one_feed['feid'] = ''
+                    one_feed['fsid'] = ''
+                    published = datetime.datetime.strptime(news.find('span', attrs={'class': 'news__item-meta'}).text.strip(), '%d.%m.%Y')
+                    one_feed['published'] = published.strftime(DATE_FORMAT)
+                    one_feed['u_etitle'] = news.find(
+                        'span',
+                        attrs={'class': 'article__title'}
+                    ).get_text().strip()
+                    one_feed['u_summary'] = news.find(
+                        'span',
+                        attrs={'class': 'article__summary'}
+                    ).get_text().strip()
+                    one_feed['etitle'] = one_feed['u_etitle']
+                    one_feed['summary'] = one_feed['u_summary']
+                    one_feed['elink'] = f"{main_url}{news.find('a').attrs['href']}"
+                    one_feed['elink_img'] = f"{main_url}{news.find('img').attrs['src']}"
+                    if go_deep != 0:  # обход ссылок по каждой новости
+                        try:
+                            page = requests.get(one_feed['elink'], timeout=REQUEST_TIMEOUT)
+                            if page.status_code != 200:
+                                continue
+                            soup = BeautifulSoup(page.text, features="html.parser").find('div', attrs={'class': 'content__inner'})
+                            soup.find('h1').decompose()
+                            try:
+                                soup.find('div', attrs={'class': 'articles'}).decompose()
+                            except Exception as e:
+                                pass
+                            one_feed['u_summary'] = soup.get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '').replace('Еще почитать', '')
+                            one_feed['summary'] = one_feed['u_summary']
+                        except Exception as e:
+                            pass
+
+                    df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+        except Exception as e:
+            pass
+
+    return OKsw, df_
+
+
+def func_100_exsoil(go_deep=1, pages_cnt=1):
+
+    os.environ['PATH'] = os.getenv('PATH') + f';{os.path.dirname(os.path.abspath(os.curdir))}'  # \\chromedriver_win32'
+
+    main_url = 'https://exsoil.com'
+    url = 'https://exsoil.com/news'
+    OKsw = None
+
+    df_ = get_newdf()
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+    try:
+        driver = webdriver.Chrome(service=service, options=options)
+        driver.get(url)
+        driver.implicitly_wait(3)
+        OKsw = 200
+        if OKsw == 200:
+            all_news = BeautifulSoup(driver.page_source, features="html.parser").find_all('li', attrs={
+                'class': 'js-feed-post'}
+            )
+            driver.close()
+            for news in all_news:
+                one_feed = {}
+                one_feed['feid'] = ''
+                one_feed['fsid'] = ''
+                one_feed['u_etitle'] = news.find('div', attrs={'class': 'js-feed-post-title'}).get_text()
+                summery = news.find('div', attrs={'class': 'js-feed-post-descr'})
+                if summery is not None:
+                    one_feed['u_summary'] = summery.get_text()
+                else:
+                    one_feed['u_summary'] = one_feed['u_etitle']
+                one_feed['etitle'] = one_feed['u_etitle']
+                one_feed['summary'] = one_feed['u_summary']
+                one_feed['elink'] = news.find('div', attrs={'class': 'js-feed-post-title'}).find('a').attrs['href']
+                published = datetime.datetime.strptime(
+                    news.find('span', attrs={'class': 'js-feed-post-date'}).get_text(),
+                    '%d.%m.%Y'
+                )
+                one_feed['published'] = published.strftime(DATE_FORMAT)
+                one_feed['elink_img'] = news.find('div', attrs={'class': 'js-feed-post-image'}).attrs['data-original']
+                if go_deep != 0:  # обход ссылок по каждой новости
+                    try:
+                        driver = webdriver.Chrome(service=service, options=options)
+                        driver.get(one_feed['elink'])
+                        driver.implicitly_wait(3)
+                        soup = BeautifulSoup(driver.page_source, features="html.parser")
+                        driver.close()
+                        one_feed['u_summary'] = soup.find(
+                            'div',
+                            attrs={'id': 'feed-text'}
+                        ).get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '')
+                        one_feed['summary'] = one_feed['u_summary']
+                    except Exception as e:
+                        pass
+
+                df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+    except Exception as e:
+        pass
+    try:
+        driver.close()
+    except:
+        pass
+
+    return OKsw, df_
+
+
+def func_101_additech(go_deep=1, pages_cnt=1):
+
+    os.environ['PATH'] = os.getenv('PATH') + f';{os.path.dirname(os.path.abspath(os.curdir))}'  # \\chromedriver_win32'
+
+    main_url = 'https://additech.by'
+    url = 'https://additech.by/index.php/ru/press-tsentr/novosti'
+
+    df_ = get_newdf()
+    OKsw = None
+    pages_cnt = 10 if pages_cnt == 0 else pages_cnt  # берём 10 страниц если пришел 0 в параметре
+
+    count = 0
+    for p in range(1, pages_cnt + 1):
+        purl = f'{url}?start={count}'
+
+        try:
+            driver = webdriver.Chrome(service=service, options=options)
+            driver.get(purl)
+            driver.implicitly_wait(3)
+            OKsw = 200
+            if OKsw == 200:
+                soup = BeautifulSoup(driver.page_source, features="html.parser").find('div', attrs={'class': 'article-list'})
+                driver.close()
+                all_news = soup.find_all('div', attrs={'class': 'article'})
+                for news in all_news:
+                    one_feed = {}
+                    one_feed['feid'] = ''
+                    one_feed['fsid'] = ''
+                    published = datetime.datetime.strptime(news.find('time').attrs['datetime'], '%Y-%m-%dT%H:%M:%S%z')
+                    one_feed['published'] = published.strftime(DATE_FORMAT)
+                    one_feed['u_etitle'] = news.find('div', attrs={'class': 'article-header'}).get_text().strip()
+                    one_feed['u_summary'] = news.find('div', attrs={'class': 'article-introtext'}).get_text().strip()
+                    one_feed['etitle'] = one_feed['u_etitle']
+                    one_feed['summary'] = one_feed['u_summary']
+                    one_feed['elink'] = f"{main_url}{news.find('a').attrs['href']}"
+                    img = news.find('img')
+                    if img is not None:
+                        one_feed['elink_img'] = f"{main_url}{img.attrs['src']}"
+                    if go_deep != 0:  # обход ссылок по каждой новости
+                        try:
+                            driver = webdriver.Chrome(service=service, options=options)
+                            driver.get(one_feed['elink'])
+                            driver.implicitly_wait(3)
+                            soup = BeautifulSoup(driver.page_source, features="html.parser")
+                            driver.close()
+                            one_feed['u_summary'] = soup.find(
+                                'div',
+                                attrs={'itemprop': 'articleBody'}
+                            ).get_text(' ', strip=True).replace('\r', '').replace('\n', '').replace('\t', '')
+                            one_feed['summary'] = one_feed['u_summary']
+                        except Exception as e:
+                            pass
+
+                    df_ = pd.concat([df_, pd.DataFrame([one_feed])], ignore_index=True)
+                count += len(all_news)
+        except Exception as e:
+            pass
+    try:
+        driver.close()
+    except:
+        pass
+
+    return OKsw, df_
+
 if __name__ == '__main__':
-    print(func_83_jandex_dzen(pages_cnt=2))
+    print(func_101_additech(pages_cnt=3))
